@@ -43,10 +43,11 @@ for t in statuses:
     db_session.add(tw)
     db_session.commit()
 
-    for k, v, in userHashtags.items():
-        hashtag = Hashtag(hashtag=v, user_id=k)
-        db_session.add(hashtag)
-        db_session.commit()
+    # for k, v, in userHashtags.items():
+    #     for ht in v:
+    #         hashtag = Hashtag(hashtag=v, user_id=k)
+    #         db_session.add(hashtag)
+    #         db_session.commit()
 
     # try:
     #     print t[]

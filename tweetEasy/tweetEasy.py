@@ -24,6 +24,7 @@ class ParseStatus(object):
 			'createdAt': self.createdAt,
 			'hashtags': self.hashtags,
 			'user_mentions': self.user_mentions,
+			'user_id':self.user_ids,
 			'users': self.userData
 		}
 
@@ -112,6 +113,9 @@ class ParseStatus(object):
 			return [m['screen_name'] for e in self.entities for m in e['user_mentions'] if m['screen_name']]
 		else:
 			return [m['screen_name'] for m in self.entities['user_mentions'] if m['screen_name']]
+
+	def user_ids(self):
+		return self.users['id']
 
 	#user level data points of interest, includes all
 	#
