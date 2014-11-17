@@ -22,6 +22,8 @@ twitter_auth = twitter.oauth.OAuth(OAUTH_TOKEN, OAUTH_TOKEN_SECRET,
 twitter_stream = twitter.TwitterStream(auth=twitter_auth)
 
 statuses = twitter_stream.statuses.filter(track=TRACK)
+search = ParseStatus(statuses)
+print search.getDict('screen_name', 'hashtags')
 
 for t in statuses:
     try:

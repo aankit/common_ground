@@ -1,11 +1,18 @@
 class ParseStatus(object):
+	"""quickly get twitter status dictionary values in an by tweet and more directly for lists
+		e.g.
+			search = ParseStatus(statuses)
+			search.getDict('hastags', 'screen_name')
+		 	search.tweetText()
+		 	search.createdAt()
 
+	"""
 	def __init__(self, statuses):
 		self.data = statuses #self.statuses is a list of dictionaries
-		if type(self.data) is dict:
+		try:
 			self.users = self.data['user']
 			self.entities = self.data['entities']
-		else:
+		except:
 			self.users = [s['user'] for s in self.data] #self.users is a list of user dictionaries
 			self.entities = [s['entities'] for s in self.data]
 			self.retweets = [s['retweeted_status'] for s in self.data if 'retweeted_status' in s.keys()]
