@@ -33,9 +33,11 @@ for t in statuses:
         u = User(screen_name=t['user']['screen_name'], uid=t['user']['id'])
         db_session.add(u)
         db_session.commit()
-
+    #is it better to add this with the u.tweets backref?
     tw = Tweet(tweet=t['text'], tid=t['id'], user_id=u.id, created_at=t['created_at'], data=json.dumps(t))
 
+    #why are we doin this now? we need to clean out the stop words...we also need to start saving
+    #hashtags
     try:
         words = tw.tweet.split()
         for w in words:
