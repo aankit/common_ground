@@ -26,10 +26,10 @@ statuses = twitter_stream.statuses.filter(track=TRACK)
 
 for t in statuses:
     try:
-        search = ParseStatus(t)
-        userHashtags = search.getDict('user_id', 'hashtags')
+        
+        # userHashtags = search.getDict('user_id', 'hashtags')
         print t['text']
-        print userHashtags
+        # print userHashtags
     except:
         print 'no text found'
     try:
@@ -38,15 +38,34 @@ for t in statuses:
         u = User(screen_name=t['user']['screen_name'], uid=t['user']['id'])
         db_session.add(u)
         db_session.commit()
+        print 'user committed'
+
+
     #is it better to add this with the u.tweets backref?
     tw = Tweet(tweet=t['text'], tid=t['id'], user_id=u.id, created_at=t['created_at'], data=json.dumps(t))
     db_session.add(tw)
     db_session.commit()
+    print 'tweet commited'
+    
 
+    search = ParseStatus(t)
+    hashtags = search.hashtags()
+    print hashtags
+
+    #try adding them to the database
+    try:
+        for h in hashtags:
+            h = Hashtag(hashtag=h, user_id=u.id)
+            db_session.add(h)
+        db_session.commit()
+    except OperationalError:
+        print 'error'
+        db_session.rollback()
+        
     # for k, v, in userHashtags.items():
     #     for ht in v:
     #Here the user_id is not the user id associated in the model, need to fix that
-    #         hashtag = Hashtag(hashtag=v, user_id=k)
+    #         hashtag = Hashtag(hashtag=v, user_id=u.id)
     #         db_session.add(hashtag)
     #         db_session.commit()
 

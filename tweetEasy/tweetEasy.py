@@ -102,11 +102,7 @@ class ParseStatus(object):
 		if type(self.entities) is list:
 			return [h['text'] for e in self.entities for h in e['hashtags'] if h]
 		else:
-			for h in self.entities['hashtags']:
-				if h['text'] != None:
-					return h['text']
-				else:
-					pass
+			return [h['text'] for h in self.entities['hashtags'] if h['text'] != None]
 
 	def user_mentions(self):
 		if type(self.entities) is list:

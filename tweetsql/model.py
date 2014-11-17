@@ -45,6 +45,7 @@ class Hashtag(Base):
     id = Column(Integer, primary_key=True)
     hashtag = Column(String(100), nullable=False)
     user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
+    tweet_id = Column(String(100), nullable=False)
     user = relationship('User', backref='hashtags')
 
     def __repr(self):
