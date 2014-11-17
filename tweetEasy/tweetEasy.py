@@ -1,4 +1,4 @@
-class ParseSearch(object):
+class ParseStatus(object):
 
 	def __init__(self, statuses):
 		self.data = statuses #self.statuses is a list of dictionaries

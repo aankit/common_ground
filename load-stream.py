@@ -6,6 +6,7 @@ from tweetsql.database import Base, db_session, engine
 from tweetsql.model import Tweet, User, Word
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
+from tweetEasy.tweetEasy import ParseStatus
 
 CONSUMER_KEY = '7fXq6uVQ5agFwdcOIG5zVkIFE'
 CONSUMER_SECRET = 'egp1S2RfnRF6TRgqZQhCsaxL2VuppLZBK0q8NXU6rXM7tdKHyp'
@@ -36,24 +37,27 @@ for t in statuses:
     #is it better to add this with the u.tweets backref?
     tw = Tweet(tweet=t['text'], tid=t['id'], user_id=u.id, created_at=t['created_at'], data=json.dumps(t))
 
+    try:
+        print t[]
+
     #why are we doin this now? we need to clean out the stop words...we also need to start saving
     #hashtags
-    try:
-        words = tw.tweet.split()
-        for w in words:
-            try:
-                w_obj = db_session.query(Word).filter(Word.word == w).one()
-            except MultipleResultsFound:
-                pass
-            except NoResultFound:
-                w_obj = Word(word=w)
-                db_session.add(w_obj)
-                db_session.commit()
-                tw.words.append(w_obj)
-        db_session.add(tw)
-        print 'tweet added'
-        db_session.commit()
-        print 'session committed'
-    except OperationalError:
-        print 'error'
-        db_session.rollback()
+    # try:
+    #     words = tw.tweet.split()
+    #     for w in words:
+    #         try:
+    #             w_obj = db_session.query(Word).filter(Word.word == w).one()
+    #         except MultipleResultsFound:
+    #             pass
+    #         except NoResultFound:
+    #             w_obj = Word(word=w)
+    #             db_session.add(w_obj)
+    #             db_session.commit()
+    #             tw.words.append(w_obj)
+    #     db_session.add(tw)
+    #     print 'tweet added'
+    #     db_session.commit()
+    #     print 'session committed'
+    # except OperationalError:
+    #     print 'error'
+    #     db_session.rollback()
