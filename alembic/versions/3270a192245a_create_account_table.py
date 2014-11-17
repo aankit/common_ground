@@ -14,11 +14,8 @@ from alembic import op
 import sqlalchemy as sa
 
 def upgrade():
-    op.create_table(
-	'hashtag',
-	sa.Column('id', sa.Integer, primary_key=True)
-	sa.Column('hashtag', sa.String(100), nullable=False)
-	sa.Column('user_id', sa.ForeignKey('user.id'), nullable=False)
+	op.alter_column('hashtag', 'tweet_id', type_=sa.String(100))
+
 
 def downgrade():
     pass

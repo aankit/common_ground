@@ -55,9 +55,10 @@ for t in statuses:
     #try adding them to the database
     try:
         for h in hashtags:
-            h = Hashtag(hashtag=h, user_id=u.id)
+            h = Hashtag(hashtag=h, user_id=u.id, tweet_id=tw.id)
             db_session.add(h)
         db_session.commit()
+        print 'hashtag committed'
     except OperationalError:
         print 'error'
         db_session.rollback()
