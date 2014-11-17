@@ -30,7 +30,7 @@ class User(Base):
     uid = Column(String(50), nullable=False)
 
     def __repr__(self):
-        return '<User {}>'.format(self.uid)
+        return '<User {}>'.format(self.screen_name)
 
 class Word(Base):
     __tablename__ = 'word'
@@ -44,6 +44,10 @@ class Hashtag(Base):
     __tablename__ = 'hashtag'
     id = Column(Integer, primary_key=True)
     hashtag = Column(String(100), nullable=False)
+    user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
+    # tweet_id = Column(Integer, ForeignKey('tweet.id'), nullable=False)
+    user = relationship('User', backref='hashtags')
 
     def __repr(self):
-        return '<User {}>'.format(self.id)
+        return '<Hashtag {}>'.format(self.hashtag)
+

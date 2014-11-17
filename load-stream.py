@@ -3,7 +3,7 @@
 import json
 import twitter
 from tweetsql.database import Base, db_session, engine
-from tweetsql.model import Tweet, User, Word
+from tweetsql.model import Tweet, User, Word, Hashtag
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 from tweetEasy.tweetEasy import ParseStatus
@@ -22,12 +22,14 @@ twitter_auth = twitter.oauth.OAuth(OAUTH_TOKEN, OAUTH_TOKEN_SECRET,
 twitter_stream = twitter.TwitterStream(auth=twitter_auth)
 
 statuses = twitter_stream.statuses.filter(track=TRACK)
-search = ParseStatus(statuses)
-print search.getDict('screen_name', 'hashtags')
+
 
 for t in statuses:
     try:
+        search = ParseStatus(t)
+        userHashtags = search.getDict('user_id', 'hashtags')
         print t['text']
+        print userHashtags
     except:
         print 'no text found'
     try:
@@ -38,9 +40,16 @@ for t in statuses:
         db_session.commit()
     #is it better to add this with the u.tweets backref?
     tw = Tweet(tweet=t['text'], tid=t['id'], user_id=u.id, created_at=t['created_at'], data=json.dumps(t))
+    db_session.add(tw)
+    db_session.commit()
 
-    try:
-        print t[]
+    for k, v, in userHashtags.items():
+        hashtag = Hashtag(hashtag=v, user_id=k)
+        db_session.add(hashtag)
+        db_session.commit()
+
+    # try:
+    #     print t[]
 
     #why are we doin this now? we need to clean out the stop words...we also need to start saving
     #hashtags

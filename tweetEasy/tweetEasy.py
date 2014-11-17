@@ -29,25 +29,45 @@ class ParseStatus(object):
 
 	def getDict(self, key, value):
 		d = dict()
-		for s in self.data:
-			#create a Search object for this one tweet
-			s_search = ParseSearch(s)
+		try:
+			for s in self.data:
+				#create a Search object for this one tweet
+				s_search = ParseStatus(s)
+				#use the dataTypes dict to get the key and value for this one tweet
+				if key in s_search.dataTypes.keys():
+					k = s_search.dataTypes[key]()
+				else:
+					k = s_search.dataTypes['users'](key)
+				if value in s_search.dataTypes.keys():
+					v = s_search.dataTypes[value]()
+				else:
+					v = s_search.dataTypes['users'](value)
+				#if the key is a list - i.e hastags, mentions, maybe more stuff
+				if type(k) is list:
+					for i in k:
+						d = self.makeDict(d, i, v)
+				else:
+					d = self.makeDict(d, k, v)
+			return d
+		except Exception,e:
+			print str(e)
 			#use the dataTypes dict to get the key and value for this one tweet
-			if key in s_search.dataTypes.keys():
-				k = s_search.dataTypes[key]()
+			if key in self.dataTypes.keys():
+				k = self.dataTypes[key]()
 			else:
-				k = s_search.dataTypes['users'](key)
-			if value in s_search.dataTypes.keys():
-				v = s_search.dataTypes[value]()
+				k = self.dataTypes['users'](key)
+			if value in self.dataTypes.keys():
+				v = self.dataTypes[value]()
 			else:
-				v = s_search.dataTypes['users'](value)
+				v = self.dataTypes['users'](value)
 			#if the key is a list - i.e hastags, mentions, maybe more stuff
 			if type(k) is list:
 				for i in k:
 					d = self.makeDict(d, i, v)
 			else:
 				d = self.makeDict(d, k, v)
-		return d
+			return d	
+
 
 	def makeDict(self, d, k, v):
 		if k in d.keys():
