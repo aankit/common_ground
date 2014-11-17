@@ -45,6 +45,7 @@ for t in statuses:
 
     # for k, v, in userHashtags.items():
     #     for ht in v:
+    #Here the user_id is not the user id associated in the model, need to fix that
     #         hashtag = Hashtag(hashtag=v, user_id=k)
     #         db_session.add(hashtag)
     #         db_session.commit()
