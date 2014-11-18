@@ -54,11 +54,12 @@ class Hashtag(Base):
 class Friend(Base):
     __tablename__ = 'friend'
     id = Column(Integer, primary_key=True)
-    friend = Column(String(100), nullable=False)
     friend_id = Column(Integer, nullable=False)
     user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
     user = relationship('User', backref='friends')
 
     def __repr(self):
         return '<Friend {}>'.format(self.friend)
+
+
 
