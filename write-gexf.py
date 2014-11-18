@@ -5,7 +5,7 @@ import re
 
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 from tweetsql.database import Base, db_session, engine
-from tweetsql.model import Tweet, User, Word
+from tweetsql.model import Tweet, User, Word, Hashtag
 
 def graph_add_node(n, g, t):
     if g.has_node(n):
@@ -27,7 +27,7 @@ graph = nx.Graph()
 
 # iterate through every tweet, storing each tweet in t
 
-print len(db_session.query(Tweet).all())
+print len(db_session.query(Hashtag).all())
 
 
     # add t to the graph
