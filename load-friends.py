@@ -1,13 +1,13 @@
-#get user friends
+#!/Users/Aankit/Documents/SocialDataAnalysis/commonCore/bin/python
 
-import keys, twitter
+import keys.lf1, twitter
 from tweetsql.model import Friend, User
 from tweetsql.database import Base, db_session, engine
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 
 #set up twitter api
-twitter_auth = twitter.oauth.OAuth(keys.OAUTH_TOKEN, keys.OAUTH_TOKEN_SECRET, keys.CONSUMER_KEY, keys.CONSUMER_SECRET)
+twitter_auth = twitter.oauth.OAuth(keys.lf1.OAUTH_TOKEN, keys.lf1.OAUTH_TOKEN_SECRET, keys.lf1.CONSUMER_KEY, keys.lf1.CONSUMER_SECRET)
 api = twitter.Twitter(auth=twitter_auth)
 
 #let's get 15 screen names that are not in the Friend table
@@ -26,10 +26,15 @@ for user in no_friends[:15]:
 	cursor = -1
 	friends = []
 	while cursor != 0:
-		results = api.friends.ids(screen_name=screen_name, cursor=cursor)
-		cursor = results['next_cursor']
-		for friend in results['ids']:
-			friends.append(friend)
+		try:
+			results = api.friends.ids(screen_name=screen_name, cursor=cursor)
+			cursor = results['next_cursor']
+			for friend in results['ids']:
+				friends.append(friend)
+		except:
+			print 'User didn\'t exist'
+			break
+			
 	for friend in friends:
 		f = Friend(friend_id=friend, user_id=user)
 		db_session.add(f)

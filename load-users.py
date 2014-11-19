@@ -10,3 +10,5 @@ from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 twitter_auth = twitter.oauth.OAuth(keys.lu.OAUTH_TOKEN, keys.lu.OAUTH_TOKEN_SECRET, keys.lu.CONSUMER_KEY, keys.lu.CONSUMER_SECRET)
 api = twitter.Twitter(auth=twitter_auth)
 
+
+
