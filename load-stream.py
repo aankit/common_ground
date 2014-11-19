@@ -1,23 +1,17 @@
 #!/usr/bin/env python
 
 import json
-import twitter
+import twitter, keys.lu
 from tweetsql.database import Base, db_session, engine
 from tweetsql.model import Tweet, User, Word, Hashtag
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 from tweetEasy.tweetEasy import ParseStatus
 
-CONSUMER_KEY = '7fXq6uVQ5agFwdcOIG5zVkIFE'
-CONSUMER_SECRET = 'egp1S2RfnRF6TRgqZQhCsaxL2VuppLZBK0q8NXU6rXM7tdKHyp'
-
-OAUTH_TOKEN = '15770482-vQ8gn5MqDUi3bY2teWJL0ioJBsuDlet6MHb4uKWC4'
-OAUTH_TOKEN_SECRET = 'cVIEPcLYyZ6YxLOvIcprVF71rYMlUOWW8k7AlKHsUv3ar'
-
 TRACK = 'common core, CCSS, commoncore'
 
-twitter_auth = twitter.oauth.OAuth(OAUTH_TOKEN, OAUTH_TOKEN_SECRET,
-                           CONSUMER_KEY, CONSUMER_SECRET)
+twitter_auth = twitter.oauth.OAuth(keys.lu.OAUTH_TOKEN, keys.luOAUTH_TOKEN_SECRET,
+                           keys.luCONSUMER_KEY, keys.luCONSUMER_SECRET)
 
 twitter_stream = twitter.TwitterStream(auth=twitter_auth)
 
