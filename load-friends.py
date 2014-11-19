@@ -19,6 +19,7 @@ no_friends = [userID for userID in all_users if userID not in got_friends]
 for user in no_friends[:15]:
 	try:
 		screen_name = db_session.query(User.screen_name).filter_by(id=user).one()
+		screen_name = screen_name[0].encode('ascii', 'ignore') #get out of the keyed tuple returned by sqlalchemy
 	except MultipleResultsFound:
 		print 'this is confusing'
 		break
