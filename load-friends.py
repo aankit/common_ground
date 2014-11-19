@@ -26,7 +26,7 @@ for user in no_friends[:15]:
 	cursor = -1
 	friends = []
 	while cursor != 0:
-		results = api.friends.id(screen_name=screen_name, cursor=cursor)
+		results = api.friends.ids(screen_name=screen_name, cursor=cursor)
 		cursor = results['next_cursor']
 		for friend in results['ids']:
 			friends.append(friend)
