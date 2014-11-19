@@ -6,8 +6,23 @@ from tweetsql.database import Base, db_session, engine
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 
+f = open('./toggle', 'r')
+whichKey = int(f.read(1))
+f.close()
+
+def toggleKey(newKey):
+	f = open('./toggle', 'w')
+	f.write(newKey)
+	f.close
+
 #set up twitter api
-twitter_auth = twitter.oauth.OAuth(keys.lf1.OAUTH_TOKEN, keys.lf1.OAUTH_TOKEN_SECRET, keys.lf1.CONSUMER_KEY, keys.lf1.CONSUMER_SECRET)
+if whichKey:
+	twitter_auth = twitter.oauth.OAuth(keys.lf1.OAUTH_TOKEN, keys.lf1.OAUTH_TOKEN_SECRET, keys.lf1.CONSUMER_KEY, keys.lf1.CONSUMER_SECRET)
+	toggleKey('0')
+else:
+	twitter_auth = twitter.oauth.OAuth(keys.lf2.OAUTH_TOKEN, keys.lf2.OAUTH_TOKEN_SECRET, keys.lf2.CONSUMER_KEY, keys.lf2.CONSUMER_SECRET)
+	toggleKey('1')
+
 api = twitter.Twitter(auth=twitter_auth)
 
 #let's get 15 screen names that are not in the Friend table
@@ -23,6 +38,7 @@ for user in no_friends[:15]:
 	except MultipleResultsFound:
 		print 'this is confusing'
 		break
+
 	cursor = -1
 	friends = []
 	while cursor != 0:
@@ -34,7 +50,7 @@ for user in no_friends[:15]:
 		except:
 			print 'User didn\'t exist'
 			break
-			
+
 	for friend in friends:
 		f = Friend(friend_id=friend, user_id=user)
 		db_session.add(f)
