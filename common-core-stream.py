@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/Users/Aankit/Documents/SocialDataAnalysis/commonCore/bin/python
 
 import json
 import twitter, keys.lu
@@ -10,8 +10,8 @@ from tweetEasy.tweetEasy import ParseStatus
 
 TRACK = 'common core, CCSS, commoncore'
 
-twitter_auth = twitter.oauth.OAuth(keys.lu.OAUTH_TOKEN, keys.luOAUTH_TOKEN_SECRET,
-                           keys.luCONSUMER_KEY, keys.luCONSUMER_SECRET)
+twitter_auth = twitter.oauth.OAuth(keys.lu.OAUTH_TOKEN, keys.lu.OAUTH_TOKEN_SECRET,
+                           keys.lu.CONSUMER_KEY, keys.lu.CONSUMER_SECRET)
 
 twitter_stream = twitter.TwitterStream(auth=twitter_auth)
 

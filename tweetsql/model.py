@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, Table, Text
+from sqlalchemy import Column, ForeignKey, Integer, String, Table, Text, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from tweetsql.database import Base
@@ -61,6 +61,20 @@ class Friend(Base):
 
     def __repr(self):
         return '<Friend {}>'.format(self.friend)
+
+class UserData(Base):
+    __tablename__='userdata'
+    id = Column(Integer, ForeignKey(
+        'user.id',  
+        ondelete="CASCADE"), 
+    primary_key=True)
+    description = Column(Text)
+    location = Column(String(100))
+    geo = Column(Boolean)
+    url = Column(String(100))
+    utc_offset = Column(Integer)
+
+
 
 
 
