@@ -6,7 +6,7 @@ from tweetsql.database import Base, db_session, engine
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 
-f = open('./toggle', 'r')
+f = open('/Users/Aankit/Documents/SocialDataAnalysis/common_core/toggle', 'r')
 whichKey = int(f.read(1))
 f.close()
 
@@ -49,6 +49,8 @@ for user in no_friends[:15]:
 				friends.append(friend)
 		except:
 			print 'User didn\'t exist'
+			# db_session.query(User).filter_by(id=user).delete()
+			# db_session.commit()
 			break
 
 	for friend in friends:

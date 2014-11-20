@@ -14,7 +14,7 @@ class Tweet(Base):
     tid = Column(String(100), nullable=False)
     user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
     #these are the relationships tying the tweet to the user and word tableshtml
-    user = relationship('User', backref='tweets')
+    user = relationship('User', backref='tweets', cascade="save-update, merge, delete")
     words = relationship('Word', backref='tweets', secondary=tweet_word)
     
     created_at = Column(String(100), nullable=False)
