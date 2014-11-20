@@ -1,0 +1,9 @@
+analysis pseudocode
+
+get counts of stuff grouped by other stuff
+
+turn this into a dataframe
+
+columns described
+
+rinse repeat a bit

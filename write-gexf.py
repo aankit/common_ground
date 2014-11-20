@@ -27,7 +27,7 @@ graph = nx.Graph()
 
 # iterate through every tweet, storing each tweet in t
 
-print len(db_session.query(Friend).all())
+print len(db_session.query(Hashtag).all())
 
 
     # add t to the graph
