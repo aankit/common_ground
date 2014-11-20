@@ -15,7 +15,7 @@ def toggleKey(newKey):
 	f.write(newKey)
 	f.close
 
-#set up twitter api
+#set up twitter api, use this toggle to cut the rate limiting in half
 if whichKey:
 	twitter_auth = twitter.oauth.OAuth(keys.lf1.OAUTH_TOKEN, keys.lf1.OAUTH_TOKEN_SECRET, 
 		keys.lf1.CONSUMER_KEY, keys.lf1.CONSUMER_SECRET)
@@ -31,16 +31,16 @@ api = twitter.Twitter(auth=twitter_auth)
 got_friends = db_session.query(Friend.user_id).all() #first get all users in the friend table
 all_users = db_session.query(User.id, User.uid).all()
 
-no_friends = [pk, uid for pk, uid in all_users if pk not in got_friends]
+no_friends = [(pk,uid) for pk,uid in all_users if pk not in got_friends]
 
-for pk, uid in no_friends[:15]:
+for pk,uid in no_friends[:15]:
 	cursor = -1
 	friends = []
 	while cursor != 0:
 		try:
-			results = api.friends.ids(user_id=uid, cursor=cursor)
-			cursor = results['next_cursor']
-			for friend in results['ids']:
+			results = api.friends.ids(user_id=uid, cursor=cursor) #get list of friends (500 at a time)
+			cursor = results['next_cursor'] #next cursor
+			for friend in results['ids']: #save to list
 				friends.append(friend)
 		except:
 			print 'User didn\'t exist'
