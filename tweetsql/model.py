@@ -28,6 +28,7 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     screen_name = Column(String(100), nullable=False)
     uid = Column(String(50), nullable=False)
+    botscore = Column(Integer)
 
     def __repr__(self):
         return '<User {}>'.format(self.screen_name)
