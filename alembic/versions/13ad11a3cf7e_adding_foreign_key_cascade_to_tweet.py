@@ -15,9 +15,8 @@ import sqlalchemy as sa
 
 
 def upgrade():
-	op.add_column('userdata', 
-			sa.Column('time_zone', sa.String(100))
-			)
+	op.drop_table('deaduser')
+			
 
 def downgrade():
     pass

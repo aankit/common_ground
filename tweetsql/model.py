@@ -74,6 +74,12 @@ class UserData(Base):
     url = Column(String(100))
     utc_offset = Column(Integer)
 
+class NoUser(Base):
+    __tablename__='nouser'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
+    user = relationship('User', backref='deaduser')
+
 
 
 
