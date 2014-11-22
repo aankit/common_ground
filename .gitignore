@@ -1,5 +1,5 @@
 .DS_Store
 *.pyc
 keys.py
-/keys/*
-/tweetsql/model.pyc
+keys/*
+/database_files

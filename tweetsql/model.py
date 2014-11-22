@@ -3,6 +3,14 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from tweetsql.database import Base
 
+hashtag_tweet = Table('hashtag_tweet', Base.metadata,
+    Column('hashtag_id', Integer, ForeignKey('hashtag.id'), nullable=False),
+    Column('tweet_id', Integer, ForeignKey('tweet.id'), nullable=False))
+
+hashtag_user = Table('hashtag_user', Base.metadata,
+    Column('hashtag_id', Integer, ForeignKey('hashtag.id'), nullable=False),
+    Column('user_id', Integer, ForeignKey('user.id'), nullable=False))
+
 tweet_word = Table('tweet_word', Base.metadata,
     Column('tweet_id', Integer, ForeignKey('tweet.id'), nullable=False),
     Column('word_id', Integer, ForeignKey('word.id'), nullable=False))
@@ -44,12 +52,11 @@ class Word(Base):
 class Hashtag(Base):
     __tablename__ = 'hashtag'
     id = Column(Integer, primary_key=True)
-    hashtag = Column(String(100), nullable=False)
-    user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
-    tweet_id = Column(String(100), nullable=False)
-    user = relationship('User', backref='hashtags')
+    hashtag = Column(String(200), nullable=False)
+    users = relationship('User', backref='hashtags', secondary='hashtag_user')
+    tweets = relationship('Tweet', backref='hashtags', secondary='hashtag_tweet')
 
-    def __repr(self):
+    def __repr__(self):
         return '<Hashtag {}>'.format(self.hashtag)
 
 class Friend(Base):
@@ -59,7 +66,7 @@ class Friend(Base):
     user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
     user = relationship('User', backref='friends')
 
-    def __repr(self):
+    def __repr__(self):
         return '<Friend {}>'.format(self.friend)
 
 class UserData(Base):
@@ -74,13 +81,17 @@ class UserData(Base):
     url = Column(String(100))
     utc_offset = Column(Integer)
 
+    def __repr__(self):
+        return '<UserData {}>'.format(self.id)
+
 class NoUser(Base):
     __tablename__='nouser'
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
     user = relationship('User', backref='deaduser')
 
-
+    def __repr__(self):
+        return '<UserData {}>'.format(self.id)
 
 
 

@@ -8,23 +8,27 @@ from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 from sqlalchemy import distinct
 
 f = open('/Users/Aankit/Documents/SocialDataAnalysis/common_core/toggle', 'r')
-whichKey = int(f.read(1))
+whichKey = f.read(1)
+whichKey = int(whichKey)
 f.close()
 
 def toggleKey(newKey):
-	f = open('./toggle', 'w')
+	f = open('/Users/Aankit/Documents/SocialDataAnalysis/common_core/toggle', 'w')
 	f.write(newKey)
 	f.close
 
 #set up twitter api, use this toggle to cut the rate limiting in half
 if whichKey:
+	toggleKey('0')
+	print 'first key'
 	twitter_auth = twitter.oauth.OAuth(keys.lf1.OAUTH_TOKEN, keys.lf1.OAUTH_TOKEN_SECRET, 
 		keys.lf1.CONSUMER_KEY, keys.lf1.CONSUMER_SECRET)
-	toggleKey('0')
 else:
+	toggleKey('1')
+	print 'second key'
 	twitter_auth = twitter.oauth.OAuth(keys.lf2.OAUTH_TOKEN, keys.lf2.OAUTH_TOKEN_SECRET, keys.lf2.CONSUMER_KEY, 
 		keys.lf2.CONSUMER_SECRET)
-	toggleKey('1')
+	
 
 api = twitter.Twitter(auth=twitter_auth)
 
@@ -45,7 +49,9 @@ for pk,uid in no_friends[:15]:
 			cursor = results['next_cursor'] #next cursor
 			for friend in results['ids']: #save to list
 				friends.append(friend)
-		except:
+			print 'friends committed'	
+		except Exception,e:
+			print e
 			print 'User didn\'t exist'
 			du = NoUser(user_id=pk)
 			db_session.add(du)
