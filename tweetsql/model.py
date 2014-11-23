@@ -53,8 +53,8 @@ class Hashtag(Base):
     __tablename__ = 'hashtag'
     id = Column(Integer, primary_key=True)
     hashtag = Column(String(200), nullable=False)
-    users = relationship('User', backref='hashtags', secondary='hashtag_user')
-    tweets = relationship('Tweet', backref='hashtags', secondary='hashtag_tweet')
+    users = relationship('User', backref='hashtags', secondary=hashtag_user)
+    tweets = relationship('Tweet', backref='hashtags', secondary=hashtag_tweet)
 
     def __repr__(self):
         return '<Hashtag {}>'.format(self.hashtag)

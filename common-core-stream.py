@@ -42,20 +42,20 @@ for t in statuses:
     print 'tweet commited'
     
 
-    search = ParseStatus(t)
-    hashtags = search.hashtags()
-    print hashtags
+    # search = ParseStatus(t)
+    # hashtags = search.hashtags()
+    # print hashtags
 
-    #try adding them to the database
-    try:
-        for h in hashtags:
-            h = Hashtag(hashtag=h, user_id=u.id, tweet_id=tw.id)
-            db_session.add(h)
-            db_session.commit()
-            print 'hashtag committed'
-    except OperationalError:
-        print 'error'
-        db_session.rollback()
+    # #try adding them to the database
+    # try:
+    #     for h in hashtags:
+    #         h = Hashtag(hashtag=h)
+    #         db_session.add(h)
+    #         db_session.commit()
+    #         print 'hashtag committed'
+    # except OperationalError:
+    #     print 'error'
+    #     db_session.rollback()
         
     # for k, v, in userHashtags.items():
     #     for ht in v:

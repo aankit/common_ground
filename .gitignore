@@ -3,3 +3,8 @@
 keys.py
 keys/*
 /database_files
+tweetsql.sql
+tweetsql.dump
+tweetsql2
+/database_files
+
