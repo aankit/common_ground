@@ -48,19 +48,19 @@ for pk,uid in no_friends[:15]:
 			results = api.friends.ids(user_id=uid, cursor=cursor) #get list of friends (500 at a time)
 			cursor = results['next_cursor'] #next cursor
 			for friend in results['ids']: #save to list
-				friends.append(friend)
-			print 'friends committed'	
+				friends.append(friend)	
 		except Exception,e:
 			print e
-			print 'User didn\'t exist'
-			du = NoUser(user_id=pk)
-			db_session.add(du)
-			db_session.commit()
-			print 'dead user committed'
-			break
+			print type(e)
+			# print 'User didn\'t exist'
+			# du = NoUser(user_id=pk)
+			# db_session.add(du)
+			# db_session.commit()
+			# print 'dead user committed'
+			# break
 
-	for friend in friends:
-		f = Friend(friend_id=friend, user_id=pk)
-		db_session.add(f)
-		db_session.commit()
+	# for friend in friends:
+	# 	f = Friend(friend_id=friend, user_id=pk)
+	# 	db_session.add(f)
+	# 	db_session.commit()
 
