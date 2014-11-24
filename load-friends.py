@@ -43,10 +43,11 @@ if get_rate_limit(t=api, data='remaining')==0:
 #let's get 15 screen names that are not in the Friend table
 got_friends = db_session.query(distinct(Friend.user_id)).all() #first get all users in the friend table
 got_friends = [t[0] for t in got_friends]
-all_users = db_session.query(User.id, User.uid).all()
 dead_users = db_session.query(NoUser.user_id).all()
+dead_users = [t[0] for t in dead_users]
+all_users = db_session.query(User.id, User.uid).all()
 all_users = [(pk,uid) for pk,uid in all_users if pk not in dead_users] #filter out dead users
-no_friends = [(pk,uid) for pk,uid in all_users if pk not in got_friends] #get rid of 
+no_friends = [(pk,uid) for pk,uid in all_users if pk not in got_friends] #get rid of people with friends
 
 # rate_limit = 15
 # requests = 0
@@ -66,7 +67,11 @@ for pk,uid in no_friends:
 				friends.append(friend)
 		except Exception,e:
 			error = json.loads(e.response_data)
-			print type(error)
+			try:
+				error = error['error']
+			except KeyError:
+				error = error['errors']
+			print error
 			print 'User protected or doesn\'t exist'
 			du = NoUser(user_id=pk)
 			db_session.add(du)
