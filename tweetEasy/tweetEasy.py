@@ -27,6 +27,7 @@ class ParseStatus(object):
 			'user_id':self.user_ids,
 			'users': self.userData
 		}
+		self.hashtags = self.hashtags()
 
 	def getDict(self, key, value):
 		d = dict()
@@ -99,10 +100,10 @@ class ParseStatus(object):
 
 	#entities data points of interest
 	def hashtags(self):
-		if type(self.entities) is list:
+		try:
 			return [h['text'] for e in self.entities for h in e['hashtags'] if h]
-		else:
-			return [h['text'] for h in self.entities['hashtags'] if h['text'] != None]
+		except:
+			return [h['text'] for h in self.entities['hashtags'] if h['text']]
 
 	def user_mentions(self):
 		if type(self.entities) is list:

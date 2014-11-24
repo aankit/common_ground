@@ -14,40 +14,41 @@ tweets_users = db_session.query(Tweet, User).join(Tweet.user).all()
 for t, u in tweets_users:
 	data = json.loads(t.data)
 	search = ParseStatus(data)
-	hashtags = search.hashtags()
-	print u.screen_name
-	for h in hashtags:
-		try:
-			h_obj = db_session.query(Hashtag).filter(Hashtag.hashtag == h).one()			
-		except MultipleResultsFound:
-			pass
-		except NoResultFound:	
-			h_obj = Hashtag(hashtag=h)
-			db_session.add(h_obj)
-		except OperationalError:
-		    print 'error'
-		    db_session.rollback()
-		#add the relationship between h_obj and tweets
-		h_obj.tweets.append(t)
-		h_obj.users.append(u)
-		db_session.commit()
+	if(len(t.hashtags)==0):
+		hashtags = search.hashtags
+		for h in hashtags:
+			try:
+				h_obj = db_session.query(Hashtag).filter(Hashtag.hashtag == h).one()			
+			except MultipleResultsFound:
+				pass
+			except NoResultFound:	
+				h_obj = Hashtag(hashtag=h)
+				db_session.add(h_obj)
+			except OperationalError:
+			    print 'error'
+			    db_session.rollback()
+			#add the relationship between h_obj and tweets
+			t.hashtags.append(h_obj)
+			u.hashtags.append(h_obj)
+			db_session.commit()
 
 		
 	words = search.tweetText().split()
-	for w in words:
-	    try:
-	        w_obj = db_session.query(Word).filter(Word.word == w).one()
-	    except MultipleResultsFound:
-	        pass
-	    except NoResultFound:
-	        if w.lower() not in stop:
-		        w_obj = Word(word=w)
-		        db_session.add(w_obj)
-	    except OperationalError:
-		    print 'error'
-		    db_session.rollback()
-	    t.words.append(w_obj)
-	    db_session.commit()
+	if(len(t.words)==0):
+		for w in words:
+		    try:
+		        w_obj = db_session.query(Word).filter(Word.word == w).one()
+		    except MultipleResultsFound:
+		        pass
+		    except NoResultFound:
+		        if w.lower() not in stop:
+			        w_obj = Word(word=w)
+			        db_session.add(w_obj)
+		    except OperationalError:
+			    print 'error'
+			    db_session.rollback()
+		    t.words.append(w_obj)
+		    db_session.commit()
 
 
 

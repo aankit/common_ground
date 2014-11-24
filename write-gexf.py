@@ -28,8 +28,8 @@ graph = nx.Graph()
 
 # iterate through every tweet, storing each tweet in t
 
-print len(db_session.query(distinct(Friend.user_id)).all())
-print len(db_session.query(Friend.user_id, func.count(Friend.friend_id)).group_by(Friend.user_id).all())
+print len(db_session.query(Tweet).all())
+# print len(db_session.query(Friend.user_id, func.count(Friend.friend_id)).group_by(Friend.user_id).all())
 
 
     # add t to the graph

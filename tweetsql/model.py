@@ -67,7 +67,7 @@ class Friend(Base):
     user = relationship('User', backref='friends')
 
     def __repr__(self):
-        return '<Friend {}>'.format(self.friend)
+        return '<Friend {}>'.format(self.friend_id)
 
 class UserData(Base):
     __tablename__='userdata'
