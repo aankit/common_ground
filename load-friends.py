@@ -1,37 +1,35 @@
 #!/Users/Aankit/Documents/SocialDataAnalysis/commonCore/bin/python
 
-import keys.lf1, keys.lf2, twitter, sys, json
+import twitter, keys.lu, keys.lf1, keys.lf2, keys.ls, sys, twitter, json
 from tweetsql.model import Friend, User, NoUser
 from tweetsql.database import Base, db_session, engine
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 from sqlalchemy import distinct
 
-f = open('/Users/Aankit/Documents/SocialDataAnalysis/common_core/toggle', 'r')
-whichKey = f.read(1)
-whichKey = int(whichKey)
-f.close()
 
-def toggleKey(newKey):
-	f = open('/Users/Aankit/Documents/SocialDataAnalysis/common_core/toggle', 'w')
-	f.write(newKey)
-	f.close
+keys = [keys.lu, keys.lf1, keys.lf2, keys.ls]
 
 def get_rate_limit(t, data='remaining'):
     limit = t.application.rate_limit_status()
     return limit['resources']['friends']['/friends/ids'][data]
 
-#set up twitter api, use this toggle to cut the rate limiting in half
-if whichKey:
-	toggleKey('0')
-	print 'first key'
-	twitter_auth = twitter.oauth.OAuth(keys.lf1.OAUTH_TOKEN, keys.lf1.OAUTH_TOKEN_SECRET, keys.lf1.CONSUMER_KEY, keys.lf1.CONSUMER_SECRET)
-else:
-	toggleKey('1')
-	print 'second key'
-	twitter_auth = twitter.oauth.OAuth(keys.lf2.OAUTH_TOKEN, keys.lf2.OAUTH_TOKEN_SECRET, keys.lf2.CONSUMER_KEY, keys.lf2.CONSUMER_SECRET)
-	
+def get_clean_key():
+	maxRemaining = 0
+	winner = ''
+	for k in keys:
+		twitter_auth = twitter.oauth.OAuth(k.OAUTH_TOKEN, k.OAUTH_TOKEN_SECRET, k.CONSUMER_KEY, k.CONSUMER_SECRET)
+		api = twitter.Twitter(auth=twitter_auth)
+		remaining = get_rate_limit(t=api)
+		if remaining > maxRemaining:
+			maxRemaining = remaining
+			winner = k
+	return winner
 
+#set up twitter api
+clean_key = get_clean_key()
+twitter_auth = twitter.oauth.OAuth(clean_key.OAUTH_TOKEN, clean_key.OAUTH_TOKEN_SECRET, 
+	clean_key.CONSUMER_KEY, clean_key.CONSUMER_SECRET)
 api = twitter.Twitter(auth=twitter_auth)
 
 if get_rate_limit(t=api, data='remaining')==0:
@@ -70,8 +68,10 @@ for pk,uid in no_friends:
 			try:
 				error = error['error']
 			except KeyError:
-				error = error['errors']
+				error = error['errors'][0]
 			print error
+			if error['code']==88:
+				break
 			print 'User protected or doesn\'t exist'
 			du = NoUser(user_id=pk)
 			db_session.add(du)

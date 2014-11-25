@@ -19,11 +19,9 @@ statuses = twitter_stream.statuses.filter(track=TRACK)
 
 
 for t in statuses:
+    #add user
     try:
-        
-        # userHashtags = search.getDict('user_id', 'hashtags')
         print t['text']
-        # print userHashtags
     except:
         print 'no text found'
     try:
@@ -35,40 +33,34 @@ for t in statuses:
         print 'user committed'
 
 
-    #is it better to add this with the u.tweets backref?
+    #add tweet
     tw = Tweet(tweet=t['text'], tid=t['id'], user_id=u.id, created_at=t['created_at'], data=json.dumps(t))
     db_session.add(tw)
     db_session.commit()
     print 'tweet commited'
     
+    #add hashtag
+    search = ParseStatus(t)
+    if(len(t.hashtags)==0):
+        hashtags = search.hashtags
+        print hashtags
+        for h in hashtags:
+            try:
+                h_obj = db_session.query(Hashtag).filter(Hashtag.hashtag == h).one()            
+            except MultipleResultsFound:
+                pass
+            except NoResultFound:   
+                h_obj = Hashtag(hashtag=h)
+                db_session.add(h_obj)
+            except OperationalError:
+                print 'error'
+                db_session.rollback()
+            #add the relationship between h_obj and tweets
+            t.hashtags.append(h_obj)
+            u.hashtags.append(h_obj)
+        db_session.commit()
 
-    # search = ParseStatus(t)
-    # hashtags = search.hashtags()
-    # print hashtags
-
-    # #try adding them to the database
-    # try:
-    #     for h in hashtags:
-    #         h = Hashtag(hashtag=h)
-    #         db_session.add(h)
-    #         db_session.commit()
-    #         print 'hashtag committed'
-    # except OperationalError:
-    #     print 'error'
-    #     db_session.rollback()
-        
-    # for k, v, in userHashtags.items():
-    #     for ht in v:
-    #Here the user_id is not the user id associated in the model, need to fix that
-    #         hashtag = Hashtag(hashtag=v, user_id=u.id)
-    #         db_session.add(hashtag)
-    #         db_session.commit()
-
-    # try:
-    #     print t[]
-
-    #why are we doin this now? we need to clean out the stop words...we also need to start saving
-    #hashtags
+    # #add words
     # try:
     #     words = tw.tweet.split()
     #     for w in words:
@@ -80,11 +72,13 @@ for t in statuses:
     #             w_obj = Word(word=w)
     #             db_session.add(w_obj)
     #             db_session.commit()
-    #             tw.words.append(w_obj)
-    #     db_session.add(tw)
-    #     print 'tweet added'
+    #         tw.words.append(w_obj)
     #     db_session.commit()
-    #     print 'session committed'
+    #     print 'words added'
     # except OperationalError:
     #     print 'error'
     #     db_session.rollback()
+
+    # #add user data
+    
+
