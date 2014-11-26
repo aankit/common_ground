@@ -7,7 +7,6 @@ from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 from sqlalchemy import distinct
 
-
 keys = [keys.lu, keys.lf1, keys.lf2, keys.ls]
 
 def get_rate_limit(t, data='remaining'):
@@ -49,7 +48,7 @@ no_friends = [(pk,uid) for pk,uid in all_users if pk not in got_friends] #get ri
 
 # rate_limit = 15
 # requests = 0
-
+print no_friends[:15]
 for pk,uid in no_friends:
 	cursor = -1
 	friends = []
@@ -57,6 +56,7 @@ for pk,uid in no_friends:
 		print 'rate limit hit'
 		print 'try again at %d' %get_rate_limit(t=api, data='reset')
 		break
+	got_an_error = False
 	while cursor != 0:
 		try:
 			results = api.friends.ids(user_id=uid, cursor=cursor) #get list of friends (500 at a time)
@@ -64,14 +64,13 @@ for pk,uid in no_friends:
 			for friend in results['ids']: #save to list
 				friends.append(friend)
 		except Exception,e:
+			got_an_error = True
 			error = json.loads(e.response_data)
 			try:
 				error = error['error']
 			except KeyError:
 				error = error['errors'][0]
 			print error
-			if error['code']==88:
-				break
 			print 'User protected or doesn\'t exist'
 			du = NoUser(user_id=pk)
 			db_session.add(du)
@@ -79,13 +78,18 @@ for pk,uid in no_friends:
 			print 'dead user committed'
 			break
 
-	print 'got some friends'
-	for friend in friends:
-		try:
-			f = Friend(friend_id=friend, user_id=pk)
-			db_session.add(f)
-			db_session.commit()
-		except OperationalError:
-			print 'error'
-			db_session.rollback()
+	if len(friends)==0 and not got_an_error:
+		f = Friend(friend_id=0, user_id=pk)
+		db_session.add(f)
+		db_session.commit()
+		print "not following anyone?"
+	else:
+		for friend in friends:
+			try:
+				f = Friend(friend_id=friend, user_id=pk)
+				db_session.add(f)
+				db_session.commit()
+			except:
+				print 'error'
+				db_session.rollback()
 

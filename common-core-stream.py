@@ -41,8 +41,8 @@ for t in statuses:
     
     #add hashtag
     search = ParseStatus(t)
-    if(len(t.hashtags)==0):
-        hashtags = search.hashtags
+    hashtags = search.hashtags
+    if len(tw.hashtags)==0 and len(hashtags)>0:
         print hashtags
         for h in hashtags:
             try:
@@ -52,13 +52,16 @@ for t in statuses:
             except NoResultFound:   
                 h_obj = Hashtag(hashtag=h)
                 db_session.add(h_obj)
+                print 'hashtag added'
             except OperationalError:
                 print 'error'
                 db_session.rollback()
             #add the relationship between h_obj and tweets
-            t.hashtags.append(h_obj)
+            tw.hashtags.append(h_obj)
             u.hashtags.append(h_obj)
+            print 'hashtag assoc added'
         db_session.commit()
+        print 'hashtag committed'
 
     # #add words
     # try:
@@ -80,5 +83,5 @@ for t in statuses:
     #     db_session.rollback()
 
     # #add user data
-    
+
 

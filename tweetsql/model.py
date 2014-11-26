@@ -80,6 +80,7 @@ class UserData(Base):
     geo = Column(Boolean)
     url = Column(String(100))
     utc_offset = Column(Integer)
+    users = relationship('User', backref='userdata')
 
     def __repr__(self):
         return '<UserData {}>'.format(self.id)

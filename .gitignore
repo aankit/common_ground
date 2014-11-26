@@ -6,6 +6,7 @@ keys/*
 tweetsql.sql
 tweetsql.dump
 tweetsql2
+tweetsql_restor
 /database_files
 /nltk_data
 /old_files
