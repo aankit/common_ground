@@ -1,13 +1,13 @@
 #!/Users/Aankit/Documents/SocialDataAnalysis/commonCore/bin/python
 
-import twitter, keys.lu, keys.lf1, keys.lf2, keys.ls, sys, twitter, json
+import twitter, keys.lu, keys.lf1, keys.lf2, keys.lf3, keys.lf4, keys.ls, sys, json
 from tweetsql.model import Friend, User, NoUser
 from tweetsql.database import Base, db_session, engine
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 from sqlalchemy import distinct
 
-keys = [keys.lu, keys.lf1, keys.lf2, keys.ls]
+keys = [keys.lu, keys.lf1, keys.lf2, keys.ls, keys.lf3, keys.lf4]
 
 def get_rate_limit(t, data='remaining'):
     limit = t.application.rate_limit_status()

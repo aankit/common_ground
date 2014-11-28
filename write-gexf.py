@@ -5,7 +5,7 @@ import re
 
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 from tweetsql.database import Base, db_session, engine
-from tweetsql.model import Tweet, User, Word, Hashtag, Friend
+from tweetsql.model import Tweet, User, Word, Hashtag, Friend, UserData, NoUser
 from sqlalchemy import distinct, func
 
 def graph_add_node(n, g, t):
