@@ -45,6 +45,7 @@ for t in statuses:
     if len(tw.hashtags)==0 and len(hashtags)>0:
         print hashtags
         for h in hashtags:
+            h = h.lower()
             try:
                 h_obj = db_session.query(Hashtag).filter(Hashtag.hashtag == h).one()            
             except MultipleResultsFound:
