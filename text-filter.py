@@ -76,8 +76,8 @@ for tweet in tweets[100:200]:
     tweet = " ".join(words)
     words = [word for word in wordpunct_tokenize(tweet) if word not in punctless_filter]
     if notShout(words):
+        acronyms = [a for a in re.findall(re_acronym, tweet) if a.lower() not in global_stop]
         cap_words = re.findall(re_comp, tweet)
-        acronyms = [a[0] for a in re.findall(re_acronym, tweet) if a[0].lower() not in global_stop]
         words = [word.lower() for word in words if word.lower() not in global_stop]
         tweet = " ".join(words)
         #debug
