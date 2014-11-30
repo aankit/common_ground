@@ -10,7 +10,7 @@ from collections import Counter
 from tweetsql.model import Tweet, Hashtag
 from tweetsql.database import db_session
 
-tweets = db_session.query(Tweet.tweet).filter(Tweet.id<500).all()
+tweets = db_session.query(Tweet.tweet).all()
 db_hashtags = db_session.query(Hashtag.hashtag).all()
 
 word_set = set()
@@ -38,14 +38,15 @@ def makeDict(d, k, v):
 
 def notShout(tokens):
     length = len(tokens)
-    shout_count = 0.0
-    for word in tokens:
-        if word.isupper():
-            shout_count += 1
-    print 'length %d' %length
-    print 'shout count %d' %shout_count
-    if shout_count/length<.6:
-        return True
+    if length >0:
+        shout_count = 0.0
+        for word in tokens:
+            if word.isupper():
+                shout_count += 1
+        if shout_count/length<.6:
+            return True
+        else:
+            return False
     else:
         return False
 
@@ -57,7 +58,8 @@ all_words = words.words()
 punctuation = list(punctuation) + [f+l for f,l in list(permutations(punctuation, 2))]
 tweet_words = []
 
-for tweet in tweets[100:200]:
+count = 0
+for tweet in tweets:
     tweet = tweet[0] #keyed tuple from sqlalchemy
     tweet = tweet.strip()
     tweet = tweet.encode('ascii', 'ignore')
@@ -93,7 +95,8 @@ for tweet in tweets[100:200]:
             tweet_words.append(words)
             #counts
             word_count.update(words)
-            hashtag_count.update(hashtags.lower())
+            hashtags = [h.lower() for h in re.findall(re_hashtag, tweet)]
+            hashtag_count.update(hashtags)
             word_set |= set(words)     #set of words
     #     mention_set |= set(mentions)
     #     retweets_set |= set(retweets)
@@ -101,9 +104,9 @@ for tweet in tweets[100:200]:
         print 'Found a shout!'
     # print "----------------"
 
-print word_count.most_common
+print word_count.most_common()
 
-print count
-for k,v in word_count.iteritems():
-    if v==1:
-        print k
+# print count
+# for k,v in word_count.iteritems():
+#     if v==1:
+#         print k
