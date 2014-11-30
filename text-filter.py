@@ -13,13 +13,13 @@ from tweetsql.database import db_session
 tweets = db_session.query(Tweet.tweet).filter(Tweet.id<500).all()
 db_hashtags = db_session.query(Hashtag.hashtag).all()
 
-hashtag_count = Counter()
-hashtag_set = set([ht[0].lower() for ht in db_hashtags])
-hashtagco = {} #hashtag co-occurence dictionary
-
 word_set = set()
 word_count = Counter()
 wordco = {} #word co-occcurence dictionary
+
+hashtag_set = set([ht[0].lower() for ht in db_hashtags])
+hashtag_count = Counter()
+hashtagco = {} #hashtag co-occurence dictionary
 
 #helpers
 def makeDict(d, k, v):
@@ -55,13 +55,13 @@ adhoc_stop = ['RT', 'via', '...']
 global_stop = stop + [ts.lower() for ts in adhoc_stop]
 all_words = words.words()
 punctuation = list(punctuation) + [f+l for f,l in list(permutations(punctuation, 2))]
-count = 0
 tweet_words = []
+
 for tweet in tweets[100:200]:
     tweet = tweet[0] #keyed tuple from sqlalchemy
     tweet = tweet.strip()
     tweet = tweet.encode('ascii', 'ignore')
-    print tweet
+    # print tweet
     #grab the special text
     hashtags = re.findall(re_hashtag, tweet)
     retweets = re.findall(re_retweets, tweet)
@@ -81,21 +81,29 @@ for tweet in tweets[100:200]:
         words = [word.lower() for word in words if word.lower() not in global_stop]
         tweet = " ".join(words)
         #debug
-        print '|urls %s' %urls
-        print '|hashtags %s' %hashtags
-        print '|mentions %s' %mentions
-        print '|retweets %s' %retweets
-        print '|cap_words %s' %cap_words
-        print '|acronyms %s' %acronyms
-        print words
+        # print '|urls %s' %urls
+        # print '|hashtags %s' %hashtags
+        # print '|mentions %s' %mentions
+        # print '|retweets %s' %retweets
+        # print '|cap_words %s' %cap_words
+        # print '|acronyms %s' %acronyms
+        # print words
         if len(retweets)==0:
             count += 1
             tweet_words.append(words)
-            word_count.update(words) #counts
+            #counts
+            word_count.update(words)
+            hashtag_count.update(hashtags.lower())
             word_set |= set(words)     #set of words
     #     mention_set |= set(mentions)
     #     retweets_set |= set(retweets)
     else:
         print 'Found a shout!'
-    print "----------------"
-print count  
+    # print "----------------"
+
+print word_count.most_common
+
+print count
+for k,v in word_count.iteritems():
+    if v==1:
+        print k
