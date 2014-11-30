@@ -26,24 +26,24 @@ def graph_add_edge(n1, n2, g):
 
 graph = nx.Graph()
 
-# iterate through every tweet, storing each tweet in t
 
-print len(db_session.query(Tweet).all())
-# print len(db_session.query(Friend.user_id, func.count(Friend.friend_id)).group_by(Friend.user_id).all())
+iterate through every tweet, storing each tweet in t
+
+print len(db_session.query(Friend.user_id, func.count(Friend.friend_id)).group_by(Friend.user_id).all())
 
 
-    # add t to the graph
-#     graph_add_node(t.tweet, graph, 'tweet')
-#     # now iterate through all the words in t, storing each word in w
-#     for w in t.words:
-#         # looking for hashtags (there's a better way to do this)
-#         if w.word[0] == '#':
-#             graph_add_node(w.word, graph, 'hashtag')
-#             graph_add_edge(t.tweet, w.word, graph)
+    add t to the graph
+    graph_add_node(t.tweet, graph, 'tweet')
+    # now iterate through all the words in t, storing each word in w
+    for w in t.words:
+        # looking for hashtags (there's a better way to do this)
+        if w.word[0] == '#':
+            graph_add_node(w.word, graph, 'hashtag')
+            graph_add_edge(t.tweet, w.word, graph)
 
-# # you probably want to change this string to something meaningful too
-# q = 'example'
+# you probably want to change this string to something meaningful too
+q = 'example'
 
-# # because it ends up in the file name for the GEXF output file
-# nx.write_gexf(graph, '{}_tweet_graph.gexf'.format(q))
-# print('{}_tweet_graph.gexf'.format(q))
+# because it ends up in the file name for the GEXF output file
+nx.write_gexf(graph, '{}_tweet_graph.gexf'.format(q))
+print('{}_tweet_graph.gexf'.format(q))
