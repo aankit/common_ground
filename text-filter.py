@@ -63,8 +63,10 @@ punctuation = list(punctuation) + [f+l for f,l in list(permutations(punctuation,
 
 
 count = 0
+rt_count = 0
 shout_count = 0
 tweet_words = []
+
 for tweet in tweets:
     tweet = tweet[0] #keyed tuple from sqlalchemy
     tweet = tweet.strip()
@@ -97,6 +99,8 @@ for tweet in tweets:
         # print '|cap_words %s' %cap_words
         # print '|acronyms %s' %acronyms
         # print words
+        if retweets:
+            rt_count += 1
         if len(retweets)==0:
             count += 1
             tweet_words.append(words)
@@ -111,15 +115,17 @@ for tweet in tweets:
         shout_count += 1
     # print "----------------"
 
-print shout_count
-print len(word_count)
-print word_count.most_common(50)
-print cap_words_count.most_common(50)
-print acronyms_count.most_common(50)
+print 'shout count %d' %shout_count
+print 'count %d' %count
+print 'retweet count %d' %rt_count
+# print len(word_count)
+# print word_count.most_common(50)
+# print cap_words_count.most_common(50)
+# print acronyms_count.most_common(50)
 
-#let's pickle some things
-output_wc = open('word_count.p', 'wb')
-output_cp = open('')
+# #let's pickle some things
+# output_wc = open('word_count.p', 'wb')
+# output_cp = open('')
 
 
 # print count
