@@ -17,3 +17,4 @@ try:
 except:
 	hashtags = db_session.query(User.id, Hashtag.hashtag).join(Hashtag.user).all()
 	pickleIt(hashtags, 'user_hashtag.p')
+

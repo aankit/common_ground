@@ -1,17 +1,20 @@
 #this is all about words
 import re, nltk
-from string import punctuation
+from string import punctuation, ascii_lowercase
 from itertools import permutations
 from patterns import *
 from nltk.tokenize import wordpunct_tokenize
 nltk.data.path.append('./tweetEasy/nltk_data/') #this may need to change depending on when
-from nltk.corpus import stopwords, words
+from nltk.corpus import stopwords
 from collections import Counter
 from tweetsql.model import Tweet, Hashtag
 from tweetsql.database import db_session
+import pickle
 
 tweets = db_session.query(Tweet.tweet).all()
 db_hashtags = db_session.query(Hashtag.hashtag).all()
+
+print 'db query done'
 
 word_set = set()
 word_count = Counter()
@@ -20,6 +23,9 @@ wordco = {} #word co-occcurence dictionary
 hashtag_set = set([ht[0].lower() for ht in db_hashtags])
 hashtag_count = Counter()
 hashtagco = {} #hashtag co-occurence dictionary
+
+cap_words_count = Counter()
+acronyms_count = Counter()
 
 #helpers
 def makeDict(d, k, v):
@@ -51,14 +57,14 @@ def notShout(tokens):
         return False
 
 #load global lists of stopwords here
-stop = stopwords.words('english')
-adhoc_stop = ['RT', 'via', '...']
-global_stop = stop + [ts.lower() for ts in adhoc_stop]
-all_words = words.words()
+adhoc_stop = ['RT', 'via', '...', 'de', 'amp']
+global_stop = stopwords.words('english') + [ts.lower() for ts in adhoc_stop] + list(ascii_lowercase)
 punctuation = list(punctuation) + [f+l for f,l in list(permutations(punctuation, 2))]
-tweet_words = []
+
 
 count = 0
+shout_count = 0
+tweet_words = []
 for tweet in tweets:
     tweet = tweet[0] #keyed tuple from sqlalchemy
     tweet = tweet.strip()
@@ -70,17 +76,18 @@ for tweet in tweets:
     urls = re.findall(re_urls, tweet)
     mentions = [m for m in re.findall(re_mentions, tweet) if m not in retweets]
     #create filters
+    punctfull_filter = urls #leaving this as such so that I can easliy add filters for 'words' with punctuation
     punctless_filter = hashtags + mentions + retweets + punctuation
-    punctfull_filter = urls
-    url_chars = [(tweet.index(url),len(url)) for url in urls]
     #filter the tweet
     words = [word for word in tweet.split() if word not in punctfull_filter]
     tweet = " ".join(words)
     words = [word for word in wordpunct_tokenize(tweet) if word not in punctless_filter]
     if notShout(words):
         acronyms = [a for a in re.findall(re_acronym, tweet) if a.lower() not in global_stop]
+        acronyms_count.update(acronyms)
         cap_words = re.findall(re_comp, tweet)
-        words = [word.lower() for word in words if word.lower() not in global_stop]
+        cap_words_count.update(cap_words)
+        words = [word.lower() for word in words if word.lower() not in global_stop and not word.isdigit()]
         tweet = " ".join(words)
         #debug
         # print '|urls %s' %urls
@@ -101,10 +108,19 @@ for tweet in tweets:
     #     mention_set |= set(mentions)
     #     retweets_set |= set(retweets)
     else:
-        print 'Found a shout!'
+        shout_count += 1
     # print "----------------"
 
-print word_count.most_common()
+print shout_count
+print len(word_count)
+print word_count.most_common(50)
+print cap_words_count.most_common(50)
+print acronyms_count.most_common(50)
+
+#let's pickle some things
+output_wc = open('word_count.p', 'wb')
+output_cp = open('')
+
 
 # print count
 # for k,v in word_count.iteritems():
