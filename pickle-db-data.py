@@ -22,13 +22,18 @@ except:
 	pickleIt(hashtags, 'user_hashtag.p')
 
 try:
-	f = open('user_friend.p', 'rb')
+	f = open('all_user_friends.p', 'rb')
 except:
 	users = db_session.query(User.id, Tweet.id).join(Tweet.user).all()
 	print 'users retrieved'
 	tweet_counter = Counter()
 	tweet_counter.update([uid for uid, tid in users])
-	top_users = set([u for u, t in tweet_counter.items() if tweet_counter[t]>5])
-	top_user_friends = db_session.query(User.uid, Friend.friend_id).join(Friend.user).filter(Friend.user_id.in_(top_users)).all()
-	print 'friends for top users retrieved'
-	pickleIt(top_user_friends, 'g5_top_user_friends.p')
+	top_users = set([u for u, t in tweet_counter.items() if tweet_counter[t]>2])
+	top_user_friends = set()
+	for obj in db_session.query(User.uid, Friend.friend_id)\
+		.join(Friend.user)\
+		.filter(Friend.user_id.in_(top_users)).yield_per(100):
+			print 'got next'
+			top_user_friends |= set(obj)
+	print 'done with queries'
+	pickleIt(top_user_friends, 'all_user_friends.p')
